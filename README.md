@@ -1,11 +1,11 @@
 # pyconuk-2018-k8s
 
 # Learning Objectives
-* What is Kuberrnetes?
+* What is Kubernetes?
 * Get familiar with Kubernetes vocabulary.
 * Install and run Kubernetes on `localhost`.
 * Interact with the Kubernetes API using `kubectl`.
-* Use the Python client for Kubernetes to create deployments.
+* Use the Python client to interact with the Kubernetes API
 
 # Development of toy application
 In order to teach students about Kubernetes, we would like to develop a toy application that is designed to be complex enough to touch beginner-intermediate k8s features. We have selected a mock JupyterHub for this.
