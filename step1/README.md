@@ -25,3 +25,16 @@ curl \
 -d '{"input": "pint(\"Hello World\")"}' \
 localhost:5000/run/aa
 ```
+
+5. Remembers variables like normal python, and supports multiple lines:
+```
+curl \
+-H "Content-Type: application/json" \
+-d '{"input": "b=1"}' \
+localhost:5000/run/aa
+
+curl \
+-H "Content-Type: application/json" \
+-d '{"input": "a=1\nprint(\"1 + 1 =\", a + b)"}' \
+localhost:5000/run/aa
+```
