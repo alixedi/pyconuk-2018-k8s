@@ -16,7 +16,8 @@ class WebConsole():
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             with contextlib.redirect_stderr(output):
-                self.console.push(code)
+                for line in code.splitlines():
+                    self.console.push(line)
         return {'output': str(output.getvalue())}
 
 
