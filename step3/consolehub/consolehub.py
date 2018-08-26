@@ -43,6 +43,5 @@ def start(uname):
 @app.route('/api/<uname>/run/', methods=['POST'])
 def run(uname):
     result = core.list_namespaced_pod('default', label_selector='uname={}'.format(uname), _request_timeout=(15, 15))
-    import pprint;pprint.pprint(result)
     ip = result.items[0].status.pod_ip
     return requests.post('http://{}:5000/run/'.format(ip), json=flask.request.get_json(), timeout=(15, 15)).content
