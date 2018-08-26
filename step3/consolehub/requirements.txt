@@ -1,0 +1,4 @@
+flask>=1,<2
+kubernetes==7.0.0
+ruamel.yaml>0.15,<0.16
+requests

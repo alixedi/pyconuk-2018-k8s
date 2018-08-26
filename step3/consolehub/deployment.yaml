@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: consolehub
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: consolehub
+rules:
+- apiGroups:
+    - ""
+  resources:
+    - pods
+    - namespaces
+    - job
+  verbs:
+    - get
+    - create
+    - watch
+    - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: consolehub
+subjects:
+- kind: ServiceAccount
+  name: consolehub
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: consolehub
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: consolehub
+  name: consolehub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consolehub
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: consolehub
+    spec:
+      serviceAccount: consolehub
+      containers:
+      - image: pyconuk-2018-k8s:consolehub
+        name: consolehub
+        ports:
+          - name: http
+            containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consolehub
+  labels:
+    app: consolehub
+spec:
+  type: NodePort
+  ports:
+  - name: consolehub
+    port: 80
+    targetPort: http
+    protocol: TCP
+  selector:
+    app: consolehub

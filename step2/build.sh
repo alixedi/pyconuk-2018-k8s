@@ -2,4 +2,4 @@
 
 set -xe
 
-docker build $(dirname "$0")/.. -f step2/Dockerfile -t pyconuk-2018-k8s:step2
+docker build $(dirname "$0")/.. -f $(dirname "$0")/Dockerfile -t pyconuk-2018-k8s:step2
