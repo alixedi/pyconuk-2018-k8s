@@ -4,12 +4,11 @@ import contextlib
 
 import flask
 
-
 app = flask.Flask(__name__)
-app.consoles = {}
+app.console = None
 
 
-class WebConsole():
+class WebConsole:
 
     def __init__(self):
         self.console = code.InteractiveConsole()
@@ -23,12 +22,12 @@ class WebConsole():
         return {'output': str(output.getvalue())}
 
 
-@app.route('/run/<uname>', methods=['POST'])
-def run(uname):
-    if not uname in app.consoles:
-        app.consoles[uname] = WebConsole()
+@app.route('/run/', methods=['POST'])
+def run():
+    if app.console is None:
+        app.console = WebConsole()
     return flask.jsonify( 
-        app.consoles[uname].run(
+        app.console.run(
             flask.request.get_json()['input']
         )
     )

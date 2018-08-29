@@ -1,20 +1,27 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: provisioner
+data:
+  settings.yaml: |-
+    REDIS: redis
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: consolehub
+  name: provisioner
   namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: consolehub
+  name: provisioner
 rules:
 - apiGroups:
     - ""
   resources:
     - pods
-    - namespaces
     - jobs
   verbs:
     - get
@@ -25,54 +32,65 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: consolehub
+  name: provisioner
 subjects:
 - kind: ServiceAccount
-  name: consolehub
+  name: provisioner
   namespace: default
 roleRef:
   kind: ClusterRole
-  name: consolehub
+  name: provisioner
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: consolehub
-  name: consolehub
+    app: provisioner
+  name: provisioner
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: consolehub
+      app: provisioner
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: consolehub
+        app: provisioner
     spec:
-      serviceAccount: consolehub
+      volumes:
+        - name: config-volume
+          configMap:
+            name: consolehub
+      serviceAccount: provisioner
       containers:
-      - image: pyconuk-2018-k8s:consolehub
-        name: consolehub
+      - image: pyconuk-2018-k8s:provisioner
+        name: provisioner
         ports:
           - name: http
             containerPort: 5000
+        volumeMounts:
+          - mountPath: "/etc/provisioner"
+            name: config-volume
+        env:
+        - name: SETTINGS
+          value: /etc/provisioner/settings.yaml
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: consolehub
+  name: provisioner
   labels:
-    app: consolehub
+    app: provisioner
 spec:
   type: NodePort
   ports:
-  - name: consolehub
+  - name: provisioner
     port: 80
     targetPort: http
     protocol: TCP
   selector:
-    app: consolehub
+    app: provisioner
