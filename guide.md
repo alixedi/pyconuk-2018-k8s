@@ -4,29 +4,32 @@ PyconUk - Kubernetes Workshop
 Session 1
 ---------
 
-1. Introduction - Learning objectives
+###Setting up
 
-	* What are Microservice, when are they useful and why?
-	* Kubernetes is a framework that helps you deploy, run and manage microservices on clusters. 
-	* At the end of today's session, you shall be able to:
-		* Demonstrate Kubernetes to your colleagues.
-		* Deploy a basic web application 
+1. Learning objectives
+	* Demonstrate Kubernetes to your colleagues.
+	* Deploy a web application on Kubernetes.
+	* Manage your deployment e.g. scaling up and down, rolling updates and rollbacks. 
+	* Deploy multiple services on Kubernetes.
+	* Describe the Kubernetes API to your colleagues.
+	* Demonstrate using kubectl to interact with the Kubernetes API.
 
-2. Installation - Virtual machine image?
-	* Ask them to install VirtualBox
-	* Ask them to download the VM image - this should contain microk8s (https://asciinema.org/a/182634) as well as Docker.
-		* Installation script:
+2. Installation
+	* Install VirtualBox (we hope you already have)
+	* Download the VM image - Ask us for a USB or use Dropbox.
+	* You VM image has microk8s (https://asciinema.org/a/182634) installed. This includes Docker and Kubernetes.
+	* If you are starting fresh i.e. not using the VM, you can use the following script to reproduce the image:
 
-		```
-		<!--The edge versoin contains docker-->
-		sudo snap install microk8s --classic --edge
-		```
+	```
+	<!--The edge versoin contains docker-->
+	$ sudo snap install microk8s --classic --edge
+	$ sudo snap alias microk8s.docker docker
+	$ sudo snap alias microk8s.kubectl kubectl
+	$ git clone https://github.com/alixedi/pyconuk-2018-k8s
+	```
 
-	* Take some USBs of VM image
-
-3. Hello World 
-	* Take from Flask home page
-	* For example `hello_world.py`:
+3. Hello World!
+	* The most basic Flask app in the world:
 	
     ```
     from flask import Flask
@@ -36,10 +39,11 @@ Session 1
     def hello():
         return "Hello World!"	    
     ```
+    
+   * You can run it like: `FLASK_APP=hello_world.py flask run`
 
-4. Docker Hello World!
-	* Basic dockerfile for our hello world app:
-	* For example `Dockerfile`
+4. Hello Docker World!
+	* A very basic dockerfile for our hello world app can look like:
 
 	```
 	FROM python
@@ -49,13 +53,12 @@ Session 1
 	CMD ["flask", "run", "-h", "0.0.0.0"]
 	```
 
-5. Brief explanation of Docker
-    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries.
-    * Get them to play around with the `$ docker` cli.
+5. A very brief intro to Docker
+	* Versus virtualenv, conda and VMs
+	* Play around with `$ docker`
+	* A brief explanation of images, containers etc.
 
-6. Interactive Console and Web console
-	* Very quick walk through of the code
-	* Which is:
+6. Interactive Console
 
     ```
     import code, io, contextlib
@@ -87,77 +90,98 @@ Session 1
         )
     ```
 
-6. Docker Web Console
-	* Follow the example of how we dockerised `hello_world.py`
+7. Assignment #1
 	* Try and dockerise `webconsole.py`
-	* See if you can get it to work
 	* What happens when you try and curl POST `/run` something
 
-7. Kuberbnetes Web Console 
-    * Push the image for webconsole
-    * kubectl run webconsole --image alixedi/webconsole --port 5000 --replicas 2
+###Hello Kubernetes
+
+8. Inrtoduction to Kubernetes
+	* Challenges of building modern applications
+		* Complexity
+		* Load characteristics
+		* Horizontal scaling
+		* CI/CD
+	* Microservice - when are they useful and why?
+	* Kubernetes - what and why?
+
+9. Kuberbnetes Web Console 
+    * Run a basic deployment: 
+    ```
+    kubectl run webconsole \
+    	--image webconsole:local \
+    	--port 5000 \
+    	--replicas 2
+    ```
+    * Run as service deployment: 
+    ```
+    kubectl run webconsole \
+    	--image webconsole:local \
+    	--port 5000 \
+    	--replicas 2 \
+    	--expose
+    ```
     * Try and kill a pod - show that it gets recreated
 
-8. Introduction to kubectl and Kubernetes API
+10. Introduction to kubectl and Kubernetes API
     * Start with `kubectl get` - we should have the webconsole running so we shoul be able to show a few objects
-    * Try and cover a fer basic commands
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
-    * Assignment - ask them to explore describe and explain for instance.
+
+11. Assignment #2
+	* Lets explore a few kubectl commands.
 
 
 Session 2
 ---------
 
 1. How to make reproducable deployments
-    * Introduce --dry-run -o yaml
-    * Introduce `kubectl -apply`
-    * Touch upon why is this nice - Infrastructure as code, declarative (essentially you describe the desired state of your infrastructure)
-	 * Run the web console with a deployment.yaml file (possibly an assignmeent)
+    * Introduction to `kubectl --dry-run -o yaml`
+    * Introduction to `kubectl -apply -f`
+    * Why is this nice - Infrastructure as code, declarative etc.
 
-2. Explain the deployment.yaml
-    * Walk through:
-    
-    ```
-		apiVersion: extensions/v1beta1
-		kind: Deployment
-		metadata:
-		  labels:
-		    app: webconsole
-		  name: webconsole
-		spec:
-		  replicas: 1
-		  selector:
-		    matchLabels:
-		      app: webconsole
-		  strategy: {}
-		  template:
-		    metadata:
-		      creationTimestamp: null
-		      labels:
-		        app: webconsole
-		    spec:
-		      containers:
-		      - image: pyconuk-2018-k8s:webconsole
-		        name: webconsole
-		        ports:
-		          - name: http
-		            containerPort: 5000
-		---
-		apiVersion: v1
-		kind: Service
-		metadata:
-		  name: webconsole
-		  labels:
-		    app: webconsole
-		spec:
-		  type: NodePort
-		  ports:
-		  - name: webconsole
-		    port: 80
-		    targetPort: http
-		    protocol: TCP
-		  selector:
-		    app: webconsole
+2. Walk through of the yaml produced:
+
+	```
+	apiVersion: extensions/v1beta1
+	kind: Deployment
+	metadata:
+	  labels:
+	    app: webconsole
+	  name: webconsole
+	spec:
+	  replicas: 1
+	  selector:
+	    matchLabels:
+	      app: webconsole
+	  strategy: {}
+	  template:
+	    metadata:
+	      creationTimestamp: null
+	      labels:
+	        app: webconsole
+	    spec:
+	      containers:
+	      - image: pyconuk-2018-k8s:webconsole
+	        name: webconsole
+	        ports:
+	          - name: http
+	            containerPort: 5000
+	---
+	apiVersion: v1
+	kind: Service
+	metadata:
+	  name: webconsole
+	  labels:
+	    app: webconsole
+	spec:
+	  type: NodePort
+	  ports:
+	  - name: webconsole
+	    port: 80
+	    targetPort: http
+	    protocol: TCP
+	  selector:
+	    app: webconsole
     ```
 
 4. Split the Web Console into the service and the job
@@ -171,3 +195,11 @@ Session 2
 6. Assignment ???
 
 7. Q and A, where to go next, wrap, check off the learning objectives, introduce helm, kapitan etc., point to next steps for further learning
+
+	* Learning objectives
+
+	* Next steps:
+
+		* Docker on Mac and Windows comes with Kubernetes
+		* For Linux, use minikube
+		* For production, AWS as well as GCP sell Kubernetes clusters
