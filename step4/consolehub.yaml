@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"ClusterRole","metadata":{"annotations":{},"name":"consolehub","namespace":""},"rules":[{"apiGroups":[""],"resources":["pods","namespaces","job"],"verbs":["get","create","watch","list"]}]}
+  creationTimestamp: 2018-08-26T14:04:47Z
+  name: consolehub
+  resourceVersion: "71020"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/clusterroles/consolehub
+  uid: fdaa62a2-a938-11e8-8d61-0800270ae9ab
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - namespaces
+  - job
+  verbs:
+  - get
+  - create
+  - watch
+  - list

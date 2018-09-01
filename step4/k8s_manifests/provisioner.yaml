@@ -1,0 +1,156 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: provisioner
+data:
+  settings.yaml: |-
+    REDIS: redis
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: provisioner
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: provisioner
+rules:
+- apiGroups:
+    - ""
+  resources:
+    - pods
+  verbs:
+    - get
+    - watch
+    - list
+- apiGroups:
+    - "batch"
+  resources:
+    - jobs
+  verbs:
+    - get
+    - create
+    - delete
+    - watch
+    - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: provisioner
+subjects:
+- kind: ServiceAccount
+  name: provisioner
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: provisioner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: provisioner
+  name: provisioner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: provisioner
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: provisioner
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: consolehub
+      serviceAccount: provisioner
+      containers:
+      - image: pyconuk-2018-k8s:provisioner
+        name: provisioner
+        volumeMounts:
+          - mountPath: "/etc/provisioner"
+            name: config-volume
+        args:
+          - provisioner
+        env:
+        - name: SETTINGS
+          value: /etc/provisioner/settings.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: job-monitor
+  name: job-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-monitor
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: job-monitor
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: consolehub
+      serviceAccount: provisioner
+      containers:
+      - image: pyconuk-2018-k8s:provisioner
+        name: job-monitor
+        volumeMounts:
+          - mountPath: "/etc/job-monitor"
+            name: config-volume
+        args:
+          - job-monitor
+        env:
+        - name: SETTINGS
+          value: /etc/job-monitor/settings.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: pod-monitor
+  name: pod-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-monitor
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pod-monitor
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: consolehub
+      serviceAccount: provisioner
+      containers:
+      - image: pyconuk-2018-k8s:provisioner
+        name: pod-monitor
+        volumeMounts:
+          - mountPath: "/etc/pod-monitor"
+            name: config-volume
+        args:
+          - pod-monitor
+        env:
+        - name: SETTINGS
+          value: /etc/pod-monitor/settings.yaml
