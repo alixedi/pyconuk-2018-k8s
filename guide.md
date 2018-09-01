@@ -98,11 +98,12 @@ Session 1
     * kubectl run webconsole --image alixedi/webconsole --port 5000 --replicas 2
     * Try and kill a pod - show that it gets recreated
 
-8. Introduction to kubectl and Kubernetes API
+8. Introduction to kubectl and Kubernetes API (step3)
     * Start with `kubectl get` - we should have the webconsole running so we shoul be able to show a few objects
     * Try and cover a fer basic commands
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
     * Assignment - ask them to explore describe and explain for instance.
+    * Show scaling and rolling updates
 
 
 Session 2
