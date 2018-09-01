@@ -1,46 +1,11 @@
 ---
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
   name: consolehub
-  namespace: default
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: provisioner
-rules:
-- apiGroups:
-    - ""
-  resources:
-    - pods
-  verbs:
-    - get
-    - watch
-    - list
-- apiGroups:
-    - "batch"
-  resources:
-    - jobs
-  verbs:
-    - get
-    - create
-    - delete
-    - watch
-    - list
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: consolehub
-subjects:
-- kind: ServiceAccount
-  name: consolehub
-  namespace: default
-roleRef:
-  kind: ClusterRole
-  name: consolehub
-  apiGroup: rbac.authorization.k8s.io
+data:
+  settings.yaml: |-
+    REDIS: redis
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -60,13 +25,22 @@ spec:
       labels:
         app: consolehub
     spec:
-      serviceAccount: consolehub
+      volumes:
+        - name: config-volume
+          configMap:
+            name: consolehub
       containers:
-      - image: pyconuk-2018-k8s:consolehub
+      - image: pyconuk-2018-k8s:consolehub-step4
         name: consolehub
         ports:
           - name: http
             containerPort: 5000
+        volumeMounts:
+          - mountPath: "/etc/consolehub"
+            name: config-volume
+        env:
+        - name: SETTINGS
+          value: /etc/consolehub/settings.yaml
 ---
 apiVersion: v1
 kind: Service
