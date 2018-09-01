@@ -53,16 +53,11 @@ Session 1
 	CMD ["flask", "run", "-h", "0.0.0.0"]
 	```
 
-<<<<<<< HEAD
 5. A very brief intro to Docker
 	* Versus virtualenv, conda and VMs
 	* Play around with `$ docker`
 	* A brief explanation of images, containers etc.
-=======
-5. Brief explanation of Docker
     * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
-    * Get them to play around with the `$ docker` cli.
->>>>>>> 3c2571bc7670e056a6d665f90fae748bb5f1470c
 
 6. Interactive Console
 
@@ -129,21 +124,14 @@ Session 1
     ```
     * Try and kill a pod - show that it gets recreated
 
-<<<<<<< HEAD
-10. Introduction to kubectl and Kubernetes API
-=======
-8. Introduction to kubectl and Kubernetes API (step3)
->>>>>>> 3c2571bc7670e056a6d665f90fae748bb5f1470c
+10. Introduction to kubectl and Kubernetes API (step3)
     * Start with `kubectl get` - we should have the webconsole running so we shoul be able to show a few objects
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
-<<<<<<< HEAD
 
 11. Assignment #2
 	* Lets explore a few kubectl commands.
-=======
     * Assignment - ask them to explore describe and explain for instance.
     * Show scaling and rolling updates
->>>>>>> 3c2571bc7670e056a6d665f90fae748bb5f1470c
 
 
 Session 2
