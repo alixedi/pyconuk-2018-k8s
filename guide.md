@@ -50,7 +50,7 @@ Session 1
 	```
 
 5. Brief explanation of Docker
-    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries.
+    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
     * Get them to play around with the `$ docker` cli.
 
 6. Interactive Console and Web console
