@@ -33,5 +33,5 @@ def start(uname):
 
 @app.route('/api/<uname>/run/', methods=['POST'])
 def run(uname):
-    ip = redis.get('webconsole-{}'.format(uname))
+    ip = redis.get('webconsole-{}'.format(uname)).decode('utf-8')
     return requests.post('http://{}:5000/run/'.format(ip), json=flask.request.get_json(), timeout=(15, 15)).content

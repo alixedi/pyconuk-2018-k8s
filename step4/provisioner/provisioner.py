@@ -1,10 +1,11 @@
 import logging
 import os
-import threading
+import argparse
 
 import kubernetes
 import ruamel.yaml
 from redis import Redis
+from redis import exceptions as redis_exceptions
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ redis = Redis(config['REDIS'], socket_connect_timeout=5, socket_timeout=5)
 
 kubernetes.config.load_incluster_config()
 
-api = kubernetes.client.BatchV1Api()
+batch = kubernetes.client.BatchV1Api()
 core = kubernetes.client.CoreV1Api()
 
 
@@ -39,7 +40,7 @@ def start_webconsole(uname):
     }
 
     try:
-        api.create_namespaced_job(
+        batch.create_namespaced_job(
             'default', job, pretty=True,
             _request_timeout=(15, 15),
         )
@@ -48,12 +49,13 @@ def start_webconsole(uname):
         return str(exc)
 
 
-def create_loop():
+def provision():
     while True:
-        item = redis.blpop('console_requests', timeout=10)
-        logger.debug('item: %s', item)
-        if not item:
+        try:
+            item = redis.blpop('console_requests', timeout=10)
+        except redis_exceptions.TimeoutError:
             continue
+        logger.debug('item: %s', item)
 
         queue, uname = item
         uname = uname.decode('utf-8')
@@ -74,7 +76,7 @@ def watch_pod_loop():
                 timeout_seconds=14,  # timeout before the read exception
                 _request_timeout=(5, 15),
         ):
-            uname = event['object'].metadata.labels.uname
+            uname = event['object'].metadata.labels['uname']
             if event['type'].lower() == 'deleted':
                 logger.info('webconsole %s finished', uname)
                 redis.delete('webconsole-{}'.format(uname))
@@ -84,10 +86,41 @@ def watch_pod_loop():
                 redis.set('webconsole-{}'.format(uname), ip)
 
 
-loops = [threading.Thread(target=create_loop), threading.Thread(target=watch_pod_loop)]
+def watch_job_loop():
+    w = kubernetes.watch.Watch()
+    while True:
+        for event in w.stream(
+                batch.list_namespaced_job, 'default',
+                label_selector='managed-by=provisioner',
+                timeout_seconds=14,  # timeout before the read exception
+                _request_timeout=(5, 15),
+        ):
+            success = bool(event['object'].status.completion_time)
+            failure = bool(event['object'].status.conditions)
+            if event['type'].lower() != 'deleted' and (success or failure):
+                logger.info('job %s: %s', event['object'].metadata.labels['uname'],
+                            'SUCCESS' if success else 'FAILURE')
+                try:
+                    api.delete_namespaced_job(
+                        event['object'].metadata.name, settings.KUBERNETES_NAMESPACE, {
+                            'apiVersion': 'v1',
+                            'kind': 'DeleteOptions',
+                            'propagationPolicy': 'Background',  # cleanup pods
+                        }, _request_timeout=(settings.CONNECTION_TIMEOUT_SECONDS,
+                                             settings.READ_TIMEOUT_SECONDS),
+                    )
+                except Exception:
+                    logger.exception('Error cleaning up job %s', event['object'].metadata.name)
 
-for loop in loops:
-    loop.start()
 
-for loop in loops:
-    loop.join()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('worker', choices=('pod-monitor', 'job-monitor', 'provisioner'),
+                        default='provisioner')
+    args = parser.parse_args()
+    if args.worker == 'pod-monitor':
+        watch_pod_loop()
+    elif args.worker == 'job-monitor':
+        watch_job_loop()
+    elif args.worker == 'provisioner':
+        provision()
