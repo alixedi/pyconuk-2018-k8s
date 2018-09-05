@@ -96,6 +96,7 @@ step 1:
     ```
     
     * Verify that everything is working
+      * login with username: osboxes password: osboxes.org
       * Verify `kubectl get pods --all-namespaces`
       * cd ~/pyconuk-2018-k8s && git pull
 
