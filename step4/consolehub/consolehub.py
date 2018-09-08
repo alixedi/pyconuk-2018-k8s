@@ -25,7 +25,7 @@ def start_webconsole(uname):
     redis.rpush('console_requests', uname.encode('utf-8'))
 
 
-@app.route('/api/start/<uname>/', methods=['POST'])
+@app.route('/api/<uname>/start/', methods=['POST'])
 def start(uname):
     start_webconsole(uname)
     return flask.jsonify({})
