@@ -12,29 +12,16 @@ In order to test:
 
 3. Hit with valid Python:
 ```
-curl \
--H "Content-Type: application/json" \
--d '{"input": "print(\"Hello World\")"}' \
-localhost:5000/run/aa
+requests.post('http://localhost:5000/api/aa/run/', json={'input': 'print("Hello World")'}).json()
 ```
 
 4. Hit with invalid Python:
 ```
-curl \
--H "Content-Type: application/json" \
--d '{"input": "pint(\"Hello World\")"}' \
-localhost:5000/run/aa
+requests.post('http://localhost:5000/api/aa/run/', json={'input': 'pint("Hello World")'}).json()
 ```
 
 5. Remembers variables like normal python, and supports multiple lines:
 ```
-curl \
--H "Content-Type: application/json" \
--d '{"input": "b=1"}' \
-localhost:5000/run/aa
-
-curl \
--H "Content-Type: application/json" \
--d '{"input": "a=1\nprint(\"1 + 1 =\", a + b)"}' \
-localhost:5000/run/aa
+requests.post('http://localhost:5000/api/aa/run/', json={'input': 'b=1'}).json()
+requests.post('http://localhost:5000/api/aa/run/', json={'input': 'a=1\nprint("1 + 1 =", a + b)'}).json()
 ```

@@ -34,7 +34,7 @@ def start_webconsole(uname):
         return str(exc)
 
 
-@app.route('/api/start/<uname>/', methods=['POST'])
+@app.route('/api/<uname>/start/', methods=['POST'])
 def start(uname):
     err = start_webconsole(uname)
     return flask.jsonify({'error': err})
