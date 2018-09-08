@@ -4,23 +4,6 @@ PyconUk - Kubernetes Workshop
 Session 1 - 90m
 ---------------
 
-todo:
-
-> syntax highlighting
-> step 5: explain dockerfile
-> demonstrator does not control the computer
-> test code in python requests
-> frontend?
-> better explanation on microservices
-> mention 12 factors apps
-> later: cluster vs machines
-> horizon scaling vs vertical scaling
-> step 9: use docker image of step 2, kubectl run
-> bonus: volume for redis
-> delete scripts
-> diagram
-
-
 ###Setting up
 
 0. Introduction to speakers
@@ -79,6 +62,7 @@ todo:
     * A brief explanation of images, containers etc.
     * image is a lightweight virtual machine image with isolation
     * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
+    * An explanation of Dockerfile
 
 6. Interactive Console
 
@@ -159,8 +143,8 @@ todo:
     * Solution: Demonstrate the replicas problem: `a=1; print(a)` would fail b/c load balancer is round robin.
 
 
-Session 2
----------
+Session 2 - 90m
+---------------
 
 1. How to make reproducable deployments
     * Introduction to `kubectl --dry-run -o yaml`
