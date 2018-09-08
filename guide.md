@@ -4,15 +4,6 @@ PyconUk - Kubernetes Workshop
 Session 1
 ---------
 
-done:
-> bridge networking -> screenshots? -> make applicance instead
-> networking fixes, docker without sudo, microk8s enable things
-> docker pull latest python:3.
-> install on vm: pip
-> export PATH=$PATH:$HOME/.local/bin ?
-> export LC_ALL=C.UTF-8
-> export LANG=C.UTF-8
-
 todo:
 > use kubectl port forward
 > Introduce ourself?
@@ -51,13 +42,7 @@ step 1:
 
 ###Setting up
 
-0. Laptop requirements:
-    * 2 GB of free ram for a virtual machine
-    * 15 GB of free disk space
-    * Virtualbox
-    * Download and install the virtual appliance:
-      https://tinyurl.com/pyconuk-2018-k8s (https://drive.google.com/file/d/10nf8EwLnamVenK7g-lXnQaWllvUQIVfh/view?usp=sharing) 
-    * But you can also pair with someone else
+0. Introduction to speakers
 
 1. Learning objectives
     * Demonstrate Kubernetes to your colleagues.
@@ -68,37 +53,19 @@ step 1:
     * Demonstrate using kubectl to interact with the Kubernetes API.
 
 2. Installation
-    * Install VirtualBox (we hope you already have)
-    * Download the Virtual appliance - Ask us for a USB or use Dropbox.
+    * Laptop requirements:
+       * ~4 GB of RAM
+       * ~15 GB of free disk space
+       * Virtualbox
+    * Download the Virtual appliance - Ask us for a USB or downlowad from [here](https://tinyurl.com/pyconuk-2018-k8s)
     * Copy/Unzip the virtual appliance
     * Import the appliance: "Import Appliance" in the File menu
     * You VM image has microk8s (https://asciinema.org/a/182634) installed. This includes Docker and Kubernetes.
-    * If you are starting fresh i.e. not using the VM, you can use the following script to reproduce the image (you also need to set networking to bridge):
-
-    ```
-    <!--The edge versoin contains docker-->
-    $ sudo snap install microk8s --classic --edge
-    $ sudo snap alias microk8s.docker docker
-    $ sudo snap alias microk8s.kubectl kubectl
-    $ sudo add-apt-repository universe
-    $ export PATH=$PATH:$HOME/.local/bin 
-    $ export LC_ALL=C.UTF-8
-    $ export LANG=C.UTF-8
-    $ sudo apt install python3-pip
-    $ sudo groupadd docker
-    $ sudo usermod -aG docker osboxes
-    $ sudo ufw allow in on cbr0 && sudo ufw allow out on cbr0
-    $ sudo iptables -P FORWARD ACCEPT
-    $ sudo ufw default allow routed
-    $ microk8s.enable dns dashboard
-    $ docker pull python:3.7.0
-    $ git clone https://github.com/alixedi/pyconuk-2018-k8s
-    ```
-    
     * Verify that everything is working
       * login with username: osboxes password: osboxes.org
       * Verify `kubectl get pods --all-namespaces`
       * cd ~/pyconuk-2018-k8s && git pull
+    * We will encourage you to pair with someone
 
 3. Hello World!
     * The most basic Flask app in the world:
