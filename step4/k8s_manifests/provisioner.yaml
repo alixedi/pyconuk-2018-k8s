@@ -7,49 +7,6 @@ data:
   settings.yaml: |-
     REDIS: redis
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: provisioner
-  namespace: default
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: provisioner
-rules:
-- apiGroups:
-    - ""
-  resources:
-    - pods
-  verbs:
-    - get
-    - watch
-    - list
-- apiGroups:
-    - "batch"
-  resources:
-    - jobs
-  verbs:
-    - get
-    - create
-    - delete
-    - watch
-    - list
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: provisioner
-subjects:
-- kind: ServiceAccount
-  name: provisioner
-  namespace: default
-roleRef:
-  kind: ClusterRole
-  name: provisioner
-  apiGroup: rbac.authorization.k8s.io
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -72,7 +29,6 @@ spec:
         - name: config-volume
           configMap:
             name: consolehub
-      serviceAccount: provisioner
       containers:
       - image: pyconuk-2018-k8s:provisioner
         name: provisioner
@@ -107,7 +63,6 @@ spec:
         - name: config-volume
           configMap:
             name: consolehub
-      serviceAccount: provisioner
       containers:
       - image: pyconuk-2018-k8s:provisioner
         name: job-monitor
@@ -142,7 +97,6 @@ spec:
         - name: config-volume
           configMap:
             name: consolehub
-      serviceAccount: provisioner
       containers:
       - image: pyconuk-2018-k8s:provisioner
         name: pod-monitor
