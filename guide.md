@@ -1,18 +1,11 @@
 PyconUk - Kubernetes Workshop
 =============================
 
-Session 1
----------
+Session 1 - 90m
+---------------
 
 todo:
-> use kubectl port forward
-> Introduce ourself?
-> scaling, rolling updates rollback?
-> deployment declarative in step 1? -> later
-> tell them to ssh into it
-> step 2: if you want to just sit in that's fine, ask who doesn't laptop, ask who is prepared to pair?
-> our VM same as users!
-> editor nano? or shared folder?
+
 > syntax highlighting
 > step 5: explain dockerfile
 > demonstrator does not control the computer
@@ -27,18 +20,6 @@ todo:
 > delete scripts
 > diagram
 
-step 1: 16:10-16:15 10
-step 2: 16:15-16:25 10
-step 3: 16:32-16:39 7
-step 4+5: 16:50-17:00 + 17:17-17:20 15
-step 6: 17:12-17:20 8
-step 7: 10 minutes? 10
-step 8: 17:45-18:02 15
-step 9+10: 18:05-18:!0 5
-step 11: 10 minutes 1-
-90 minutes
-===
-step 1: 
 
 ###Setting up
 
@@ -70,7 +51,7 @@ step 1:
 3. Hello World!
     * The most basic Flask app in the world:
     
-    ```
+    ```python
     from flask import Flask
     app = Flask(__name__)
 
@@ -84,7 +65,7 @@ step 1:
 4. Hello Docker World!
     * A very basic dockerfile for our hello world app can look like:
 
-    ```
+    ```docker
     FROM python
     RUN pip install flask
     ADD hello_world.py
@@ -101,7 +82,7 @@ step 1:
 
 6. Interactive Console
 
-    ```
+    ```python
     import code, io, contextlib
     import flask
 
@@ -148,21 +129,25 @@ step 1:
 
 9. Kuberbnetes Web Console 
     * Run a basic deployment: 
-    ```
+    ```bash
     kubectl run webconsole \
         --image webconsole:local \
         --port 5000 \
         --replicas 2
     ```
     * Run as service deployment: 
-    ```
+    ```bash
     kubectl run webconsole \
         --image webconsole:local \
         --port 5000 \
         --replicas 2 \
         --expose
     ```
-    * Try and kill a pod - show that it gets recreated
+
+   * Try and access a pod using `port-forward`
+   * Try and scale the deployment - show the new pods being created
+   * Try and kill a pod - show that it gets recreated
+   * Try and change the code and demonstrate a rolling update
 
 10. Introduction to kubectl and Kubernetes API (step3)
     * Start with `kubectl get` - we should have the webconsole running so we shoul be able to show a few objects
@@ -170,8 +155,8 @@ step 1:
 
 11. Assignment #2
     * Lets explore a few kubectl commands.
-    * Assignment - ask them to explore describe and explain for instance.
-> probably change this to demonstrate the replicas problem(a=1, print(a) fails)
+    * Assignment - See if you can figure out a problem with our application
+    * Solution: Demonstrate the replicas problem: `a=1; print(a)` would fail b/c load balancer is round robin.
 
 
 Session 2
@@ -181,11 +166,10 @@ Session 2
     * Introduction to `kubectl --dry-run -o yaml`
     * Introduction to `kubectl -apply -f`
     * Why is this nice - Infrastructure as code, declarative etc.
->  Show scaling and rolling updates
-    
+
 2. Walk through of the yaml produced:
 
-    ```
+    ```yaml
     apiVersion: extensions/v1beta1
     kind: Deployment
     metadata:
@@ -229,9 +213,9 @@ Session 2
     ```
 
 4. Split the Web Console into the service and the job
-    * Introduce what a job is and how is it different to a service - this is basically the version that we developed on 27 Aug (see Git - Step3)
-    * Start with a quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/consolehub.py)
-    * Followed by [job_template](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
+    * Introduce services and jobs
+    * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/consolehub.py)
+    * Walk-through of [job_template](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
     * `kubectl --apply` followed by `kubectl get pods|services|jobs`
 
 5. Introduce the final version that has API, provisioner, redis as a queue and the jobs
