@@ -6,22 +6,22 @@
 - Run the following commands:
 
 ```
-    $ sudo snap install microk8s --classic --edge
-    $ sudo snap alias microk8s.docker docker
-    $ sudo snap alias microk8s.kubectl kubectl
-    $ sudo add-apt-repository universe
-    $ export PATH=$PATH:$HOME/.local/bin 
-    $ export LC_ALL=C.UTF-8
-    $ export LANG=C.UTF-8
-    $ sudo apt install python3-pip
-    $ sudo groupadd docker
-    $ sudo usermod -aG docker osboxes
-    $ sudo ufw allow in on cbr0 && sudo ufw allow out on cbr0
-    $ sudo iptables -P FORWARD ACCEPT
-    $ sudo ufw default allow routed
-    $ microk8s.enable dns dashboard
-    $ docker pull python:3.7.0
-    $ git clone https://github.com/alixedi/pyconuk-2018-k8s
+    sudo snap install microk8s --classic --edge
+    sudo snap alias microk8s.docker docker
+    sudo snap alias microk8s.kubectl kubectl
+    sudo add-apt-repository universe
+    export PATH=$PATH:$HOME/.local/bin 
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    sudo apt install python3-pip
+    sudo groupadd docker
+    sudo usermod -aG docker osboxes
+    sudo ufw allow in on cbr0 && sudo ufw allow out on cbr0
+    sudo iptables -P FORWARD ACCEPT
+    sudo ufw default allow routed
+    microk8s.enable dns dashboard
+    docker pull python:3.7.0
+    git clone https://github.com/alixedi/pyconuk-2018-k8s
 ```
 
 ## RBAC
