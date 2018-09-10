@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.7.0
 
 ADD step1/requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt

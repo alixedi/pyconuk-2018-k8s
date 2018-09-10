@@ -1,10 +1,32 @@
 PyconUk - Kubernetes Workshop
 =============================
 
+TODO:
+- figure out good solution for install
+- point to next sources 
+  persistent volumes
+- point to in depth sources like:
+  https://www.youtube.com/watch?v=Utf-A4rODH8
+- repeat answers?
+- switch step 5 & 6
+- better description of docker
+- have all commands in the guide
+- cluster vs machines, pets vs cattle
+- for all assignments: have relevant info (example dockerfile, commands, etc) on one slide/guide
+- problem not shown with requests (persistent request)
+- reorder docker image for speed (tini beofre app code)
+- watch == service
+- don't use this code!
+- demonstrate rolling updates
+
+
+17:55 (10 minutes discussion)
+
+
 Session 1 - 90m
 ---------------
 
-1. Introduction to speakers
+1. Introduction to speakers 
 
 2. Learning objectives
     * Demonstrate Kubernetes to your colleagues.
@@ -42,7 +64,7 @@ Session 1 - 90m
     ```
     
    * You can run it like: `FLASK_APP=hello_world.py flask run`
-
+- alternatives? 
 5. Hello Docker World!
     * A very basic dockerfile for our hello world app can look like:
 
@@ -98,7 +120,7 @@ Session 1 - 90m
     * Try and dockerise `webconsole.py`
     * What happens when you try and curl POST `/run` something
 
-9. Inrtoduction to Kubernetes
+9. Introduction to Kubernetes
     * Challenges of building modern applications
         * Complexity
         * Load characteristics
@@ -107,14 +129,7 @@ Session 1 - 90m
     * Microservice - when are they useful and why? 
     * Kubernetes - what and why? > solves most of the microservices problems
 
-10. Kuberbnetes Web Console 
-    * Run a basic deployment: 
-    ```bash
-    kubectl run webconsole \
-        --image webconsole:local \
-        --port 5000 \
-        --replicas 2
-    ```
+10. Kubernetes Web Console 
     * Run as service deployment: 
     ```bash
     kubectl run webconsole \
@@ -130,7 +145,7 @@ Session 1 - 90m
    * Try and change the code and demonstrate a rolling update
 
 11. Introduction to kubectl and Kubernetes API (step3)
-    * Start with `kubectl get` - we should have the webconsole running so we shoul be able to show a few objects
+    * Start with `kubectl get` - we should have the webconsole running so we should be able to show a few objects
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
 
 12. Assignment:
