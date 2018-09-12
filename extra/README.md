@@ -6,22 +6,28 @@
 - Run the following commands:
 
 ```
+    sudo ufw allow in on cbr0
+    sudo ufw allow out on cbr0
+    sudo ufw default allow routed
+    sudo ufw allow ssh
+    sudo ufw enable
+    
     sudo snap install microk8s --classic --edge
     sudo snap alias microk8s.docker docker
     sudo snap alias microk8s.kubectl kubectl
+    microk8s.enable dns dashboard
     sudo add-apt-repository universe
+    sudo apt install python3-pip
+    docker pull python:3.7.0
+    git clone https://github.com/alixedi/pyconuk-2018-k8s
+```
+
+- Add the following to your `~/.bashrc`:
+
+```
     export PATH=$PATH:$HOME/.local/bin 
     export LC_ALL=C.UTF-8
     export LANG=C.UTF-8
-    sudo apt install python3-pip
-    sudo groupadd docker
-    sudo usermod -aG docker osboxes
-    sudo ufw allow in on cbr0 && sudo ufw allow out on cbr0
-    sudo iptables -P FORWARD ACCEPT
-    sudo ufw default allow routed
-    microk8s.enable dns dashboard
-    docker pull python:3.7.0
-    git clone https://github.com/alixedi/pyconuk-2018-k8s
 ```
 
 ## RBAC

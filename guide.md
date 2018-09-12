@@ -1,6 +1,19 @@
 PyconUk - Kubernetes Workshop
 =============================
 
+Home instructions
+-----------------
+
+- laptop requirement:
+    * ~4 GB of RAM
+    * ~15 GB of free disk space
+- Download & install virtualbox: https://www.virtualbox.org/wiki/Downloads
+- Download & unzip our disk image: https://tinyurl.com/y9tvcsbj
+- Download & install ssh client (mac & linux have this usually installed), for windows:
+  https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+- When following after the workshop at Pycon UK, see the guide at:
+  https://github.com/alixedi/pyconuk-2018-k8s
+
 Session 1 - 90m
 ---------------
 
@@ -19,12 +32,21 @@ Session 1 - 90m
        * ~4 GB of RAM
        * ~15 GB of free disk space
        * Virtualbox
-    * Download the Virtual appliance - Ask us for a USB or downlowad from [here](https://tinyurl.com/pyconuk-2018-k8s)
-    * Copy/Unzip the virtual appliance
-    * Import the appliance: "Import Appliance" in the File menu
+       * ssh client
+    * Download the virtual disk - Ask us for a USB or download from [here](https://tinyurl.com/y9tvcsbj)
+    * Unzip the virtual disk
+    * Create a virtual machine:
+      * Type: Linux, version: Ubuntu 64 bit
+      * 2048 RAM
+      * "use existing virtual hard disk file" (use the unziped virtaul disk from the previous step)
+      * Create 
+      * machine -> settings
+      * network -> change to bridge
     * You VM image has microk8s (https://asciinema.org/a/182634) installed. This includes Docker and Kubernetes.
     * Verify that everything is working
       * login with username: osboxes password: osboxes.org
+      * get the ip address: `ip addr show | grep enp0s3`
+      * ssh into your machine 
       * Verify `kubectl get pods --all-namespaces`
       * cd ~/pyconuk-2018-k8s && git pull
     * We will encourage you to pair with someone
@@ -43,7 +65,15 @@ Session 1 - 90m
     
    * You can run it like: `FLASK_APP=hello_world.py flask run`
 
-5. Hello Docker World!
+5. A very brief intro to Docker
+    * Versus virtualenv, conda and VMs
+    * Play around with `$ docker`
+    * A brief explanation of images, containers etc.
+    * image is a lightweight virtual machine image with isolation
+    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
+    * An explanation of Dockerfile
+
+6. Hello Docker World!
     * A very basic dockerfile for our hello world app can look like:
 
     ```docker
@@ -53,14 +83,6 @@ Session 1 - 90m
     ENV FLASK_APP=hello_world.py
     CMD ["flask", "run", "-h", "0.0.0.0"]
     ```
-
-6. A very brief intro to Docker
-    * Versus virtualenv, conda and VMs
-    * Play around with `$ docker`
-    * A brief explanation of images, containers etc.
-    * image is a lightweight virtual machine image with isolation
-    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
-    * An explanation of Dockerfile
 
 7. Interactive Console
 
@@ -98,7 +120,7 @@ Session 1 - 90m
     * Try and dockerise `webconsole.py`
     * What happens when you try and curl POST `/run` something
 
-9. Inrtoduction to Kubernetes
+9. Introduction to Kubernetes
     * Challenges of building modern applications
         * Complexity
         * Load characteristics
@@ -107,14 +129,7 @@ Session 1 - 90m
     * Microservice - when are they useful and why? 
     * Kubernetes - what and why? > solves most of the microservices problems
 
-10. Kuberbnetes Web Console 
-    * Run a basic deployment: 
-    ```bash
-    kubectl run webconsole \
-        --image webconsole:local \
-        --port 5000 \
-        --replicas 2
-    ```
+10. Kubernetes Web Console 
     * Run as service deployment: 
     ```bash
     kubectl run webconsole \
@@ -130,7 +145,7 @@ Session 1 - 90m
    * Try and change the code and demonstrate a rolling update
 
 11. Introduction to kubectl and Kubernetes API (step3)
-    * Start with `kubectl get` - we should have the webconsole running so we shoul be able to show a few objects
+    * Start with `kubectl get` - we should have the webconsole running so we should be able to show a few objects
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
 
 12. Assignment:
