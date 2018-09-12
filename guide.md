@@ -1,32 +1,10 @@
 PyconUk - Kubernetes Workshop
 =============================
 
-TODO:
-- figure out good solution for install
-- point to next sources 
-  persistent volumes
-- point to in depth sources like:
-  https://www.youtube.com/watch?v=Utf-A4rODH8
-- repeat answers?
-- switch step 5 & 6
-- better description of docker
-- have all commands in the guide
-- cluster vs machines, pets vs cattle
-- for all assignments: have relevant info (example dockerfile, commands, etc) on one slide/guide
-- problem not shown with requests (persistent request)
-- reorder docker image for speed (tini beofre app code)
-- watch == service
-- don't use this code!
-- demonstrate rolling updates
-
-
-17:55 (10 minutes discussion)
-
-
 Session 1 - 90m
 ---------------
 
-1. Introduction to speakers 
+1. Introduction to speakers
 
 2. Learning objectives
     * Demonstrate Kubernetes to your colleagues.
@@ -41,12 +19,21 @@ Session 1 - 90m
        * ~4 GB of RAM
        * ~15 GB of free disk space
        * Virtualbox
-    * Download the Virtual appliance - Ask us for a USB or downlowad from [here](https://tinyurl.com/pyconuk-2018-k8s)
-    * Copy/Unzip the virtual appliance
-    * Import the appliance: "Import Appliance" in the File menu
+       * ssh client
+    * Download the virtual disk - Ask us for a USB or download from [here](https://tinyurl.com/y9tvcsbj)
+    * Unzip the virtual disk
+    * Create a virtual machine:
+      * Type: Linux, version: Ubuntu 64 bit
+      * 2048 RAM
+      * "use existing virtual hard disk file" (use the unziped virtaul disk from the previous step)
+      * Create 
+      * machine -> settings
+      * network -> change to bridge
     * You VM image has microk8s (https://asciinema.org/a/182634) installed. This includes Docker and Kubernetes.
     * Verify that everything is working
       * login with username: osboxes password: osboxes.org
+      * get the ip address: `ip addr show | grep enp0s3`
+      * ssh into your machine 
       * Verify `kubectl get pods --all-namespaces`
       * cd ~/pyconuk-2018-k8s && git pull
     * We will encourage you to pair with someone
@@ -64,8 +51,16 @@ Session 1 - 90m
     ```
     
    * You can run it like: `FLASK_APP=hello_world.py flask run`
-- alternatives? 
-5. Hello Docker World!
+
+5. A very brief intro to Docker
+    * Versus virtualenv, conda and VMs
+    * Play around with `$ docker`
+    * A brief explanation of images, containers etc.
+    * image is a lightweight virtual machine image with isolation
+    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
+    * An explanation of Dockerfile
+
+6. Hello Docker World!
     * A very basic dockerfile for our hello world app can look like:
 
     ```docker
@@ -75,14 +70,6 @@ Session 1 - 90m
     ENV FLASK_APP=hello_world.py
     CMD ["flask", "run", "-h", "0.0.0.0"]
     ```
-
-6. A very brief intro to Docker
-    * Versus virtualenv, conda and VMs
-    * Play around with `$ docker`
-    * A brief explanation of images, containers etc.
-    * image is a lightweight virtual machine image with isolation
-    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
-    * An explanation of Dockerfile
 
 7. Interactive Console
 
