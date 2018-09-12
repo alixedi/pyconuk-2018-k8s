@@ -1,6 +1,17 @@
 PyconUk - Kubernetes Workshop
 =============================
 
+Home instructions
+-----------------
+
+- laptop requirement:
+    * ~4 GB of RAM
+    * ~15 GB of free disk space
+- Download & install virtualbox: https://www.virtualbox.org/wiki/Downloads
+- Download & unzip our disk image: https://tinyurl.com/y9tvcsbj
+- Download & install ssh client (mac & linux have this usually installed), for windows:
+  https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+
 Session 1 - 90m
 ---------------
 
