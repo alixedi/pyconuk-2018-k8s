@@ -11,6 +11,8 @@ Home instructions
 - Download & unzip our disk image: https://tinyurl.com/y9tvcsbj
 - Download & install ssh client (mac & linux have this usually installed), for windows:
   https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+- When following after the workshop at Pycon UK, see the guide at:
+  https://github.com/alixedi/pyconuk-2018-k8s
 
 Session 1 - 90m
 ---------------
