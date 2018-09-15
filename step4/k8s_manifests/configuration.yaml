@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consolehub-config
+data:
+  redis.hostname: redis

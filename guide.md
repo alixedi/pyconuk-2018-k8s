@@ -41,12 +41,12 @@ Session 1 - 90m
       * "use existing virtual hard disk file" (use the unziped virtaul disk from the previous step)
       * Create 
       * machine -> settings
-      * network -> change to bridge
+      * network -> port-forwarding -> create new rule: host port: 2222, guest port: 22
     * You VM image has microk8s (https://asciinema.org/a/182634) installed. This includes Docker and Kubernetes.
     * Verify that everything is working
+      * get the ip address of the NAT network: `ip addr show | grep vboxnet0`
+      * ssh into your machine: `ssh osboxes@<ip> -p 2222` (if using putty: there is a field for the port)
       * login with username: osboxes password: osboxes.org
-      * get the ip address: `ip addr show | grep enp0s3`
-      * ssh into your machine 
       * Verify `kubectl get pods --all-namespaces`
       * cd ~/pyconuk-2018-k8s && git pull
     * We will encourage you to pair with someone
@@ -240,7 +240,7 @@ Session 2 - 90m
     * Ask if people understand why
     * Explain the issue with load balancing
 
-4. Split the Web Console into the service and the job
+4. Split the Web Console to solve the problem:
     * Introduce jobs
     * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/consolehub.py)
     * Walk-through of [job_template](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
@@ -276,19 +276,31 @@ Session 2 - 90m
         kubectl get services
         kubectl get jobs
      ```
-     
--- 50 minutes
 
-5. Introduce the final version that has API, provisioner, redis as a queue and the jobs
+6. Problems with the current implementation:
+  * Tight coupling of the application code and infrastructure
+  * You create the job synchronously
+  
+-- 60 minutes
+  
+7. Introduce the final version:
+    * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step4/consolehub/consolehub.py)
+    * Only the provisioner is coupled to kubernetes [provisioner.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step4/provisoner/provisioner.py)
+    
+8. Demonstrate rolling update
+    
+9. Assignment, do the rolling update:
+   * Build: `./step4/build.sh`
+   * Apply the manifest: `kubectl apply -f step4/k8s_manifests`
+   * use `kubectl get pods` to see pods shutdown and start in a rolling way
 
-6. Assignment ???
+10. Next steps:
 
-7. Q and A, where to go next, wrap, check off the learning objectives, introduce helm, kapitan etc., point to next steps for further learning
+    * Local running options:
+      * docker for mac & windows: https://blog.docker.com/2018/01/docker-mac-kubernetes/
+      * minikube (sometimes fiddly) or microk8s (alpha)
+    * Production clusters:
+      * gcp/aws/digital ocean
+      * Other options: https://kubernetes.io/docs/setup/     
 
-    * Learning objectives
-
-    * Next steps:
-
-        * Docker on Mac and Windows comes with Kubernetes
-        * For Linux, use minikube
-        * For production, AWS as well as GCP sell Kubernetes clusters
+11. Q&A

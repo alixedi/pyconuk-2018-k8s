@@ -2,7 +2,6 @@ import logging
 import os
 
 import flask
-import ruamel.yaml
 import requests
 from redis import Redis
 
@@ -10,15 +9,9 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
-settings = os.getenv('SETTINGS', None)
-app.config.update({
-    'REDIS': 'localhost',
-})
-if settings:
-    with open(settings) as fo:
-        app.config.update(ruamel.yaml.safe_load(fo))
+redis_hostname = os.getenv('REDIS_HOSTNAME', 'localhost')
 
-redis = Redis(app.config['REDIS'], socket_connect_timeout=5, socket_timeout=5)
+redis = Redis(redis_hostname, socket_connect_timeout=5, socket_timeout=5)
 
 
 def start_webconsole(uname):
