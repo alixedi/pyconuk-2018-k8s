@@ -10,16 +10,9 @@ from redis import exceptions as redis_exceptions
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-settings = os.getenv('SETTINGS', None)
-config = {
-    'REDIS': 'localhost',
-}
-if settings:
-    with open(settings) as fo:
-        config.update(ruamel.yaml.safe_load(fo))
+redis_hostname = os.getenv('REDIS_HOSTNAME', 'localhost')
 
-logger.debug('config: %s', config)
-redis = Redis(config['REDIS'], socket_connect_timeout=5, socket_timeout=5)
+redis = Redis(redis_hostname, socket_connect_timeout=5, socket_timeout=5)
 
 kubernetes.config.load_incluster_config()
 
@@ -86,33 +79,6 @@ def watch_pod_loop():
                 redis.set('webconsole-{}'.format(uname), ip)
 
 
-def watch_job_loop():
-    w = kubernetes.watch.Watch()
-    while True:
-        for event in w.stream(
-                batch.list_namespaced_job, 'default',
-                label_selector='managed-by=provisioner',
-                timeout_seconds=14,  # timeout before the read exception
-                _request_timeout=(5, 15),
-        ):
-            success = bool(event['object'].status.completion_time)
-            failure = bool(event['object'].status.conditions)
-            if event['type'].lower() != 'deleted' and (success or failure):
-                logger.info('job %s: %s', event['object'].metadata.labels['uname'],
-                            'SUCCESS' if success else 'FAILURE')
-                try:
-                    api.delete_namespaced_job(
-                        event['object'].metadata.name, settings.KUBERNETES_NAMESPACE, {
-                            'apiVersion': 'v1',
-                            'kind': 'DeleteOptions',
-                            'propagationPolicy': 'Background',  # cleanup pods
-                        }, _request_timeout=(settings.CONNECTION_TIMEOUT_SECONDS,
-                                             settings.READ_TIMEOUT_SECONDS),
-                    )
-                except Exception:
-                    logger.exception('Error cleaning up job %s', event['object'].metadata.name)
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('worker', choices=('pod-monitor', 'job-monitor', 'provisioner'),
@@ -120,7 +86,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.worker == 'pod-monitor':
         watch_pod_loop()
-    elif args.worker == 'job-monitor':
-        watch_job_loop()
     elif args.worker == 'provisioner':
         provision()

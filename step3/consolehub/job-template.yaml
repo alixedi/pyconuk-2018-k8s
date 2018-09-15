@@ -6,5 +6,3 @@ spec:
       containers:
       - name: webconsole
         image: pyconuk-2018-k8s:webconsole
-      restartPolicy: Never
-  backoffLimit: 0

@@ -2,18 +2,11 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    app: consolehub
   name: consolehub
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: consolehub
-  strategy: {}
+  replicas: 2
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: consolehub
     spec:
@@ -31,11 +24,9 @@ metadata:
   labels:
     app: consolehub
 spec:
-  type: NodePort
   ports:
   - name: consolehub
     port: 80
     targetPort: http
-    protocol: TCP
   selector:
     app: consolehub

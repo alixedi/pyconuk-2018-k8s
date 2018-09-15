@@ -51,7 +51,7 @@ Session 1 - 90m
       * cd ~/pyconuk-2018-k8s && git pull
     * We will encourage you to pair with someone
 
-4. Hello World!
+4. Hello World! (step0)
     * The most basic Flask app in the world:
     
     ```python
@@ -70,8 +70,10 @@ Session 1 - 90m
     * Play around with `$ docker`
     * A brief explanation of images, containers etc.
     * image is a lightweight virtual machine image with isolation
-    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries. Docker also standarizes (a lot of things) on how you run applications.
-    * An explanation of Dockerfile
+    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries, and other.
+      Docker also standarizes (a lot of things) on how you run applications.
+      
+-- 30 minutes
 
 6. Hello Docker World!
     * A very basic dockerfile for our hello world app can look like:
@@ -83,20 +85,28 @@ Session 1 - 90m
     ENV FLASK_APP=hello_world.py
     CMD ["flask", "run", "-h", "0.0.0.0"]
     ```
+    
+    * docker build . -t hello-world:local
 
-7. Interactive Console
+7. Interactive Console (step1)
 
     ```python
-    import code, io, contextlib
+    import code
+    import io
+    import contextlib
+    
     import flask
-
+    
+    
     app = flask.Flask(__name__)
-    app.console = None
-
+    app.consoles = {}
+    
+    
     class WebConsole:
+    
         def __init__(self):
             self.console = code.InteractiveConsole()
-
+    
         def run(self, code):
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
@@ -104,21 +114,26 @@ Session 1 - 90m
                     for line in code.splitlines():
                         self.console.push(line)
             return {'output': str(output.getvalue())}
-
-    @app.route('/run/', methods=['POST'])
-    def run():
-        if app.console is None:
-            app.console = WebConsole()
-        return flask.jsonify( 
-            app.console.run(
+    
+    
+    @app.route('/api/<uname>/run/', methods=['POST'])
+    def run(uname):
+        if not uname in app.consoles:
+            app.consoles[uname] = WebConsole()
+        return flask.jsonify(
+            app.consoles[uname].run(
                 flask.request.get_json()['input']
             )
         )
     ```
 
-8. Assignment #1
-    * Try and dockerise `webconsole.py`
-    * What happens when you try and curl POST `/run` something
+8. Assignment #1: webconsole in docker
+    * Create a `Dockerfile` for webconsole
+    * Build the image
+    * Run the image
+    * What happens when you try and curl POST `/api/run/` something
+
+-- 1 hour
 
 9. Introduction to Kubernetes
     * Challenges of building modern applications
@@ -127,91 +142,142 @@ Session 1 - 90m
         * Horizontal scaling
         * CI/CD
     * Microservice - when are they useful and why? 
-    * Kubernetes - what and why? > solves most of the microservices problems
+    * Kubernetes - what and why? - solves most of the microservices problems
 
-10. Kubernetes Web Console 
+10. Kubernetes Web Console (step2)
     * Run as service deployment: 
     ```bash
     kubectl run webconsole \
-        --image webconsole:local \
+        --image pyconuk-2018-k8s:step2 \
         --port 5000 \
         --replicas 2 \
         --expose
     ```
-
-   * Try and access a pod using `port-forward`
+    
+   * Explain pods, deployments, and services
+   * Access the service:
+     * proxy: `kubectl proxy` (explain what this does)
+     * Use the service:
+       ```python
+        import requests
+        requests.post('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/me/run/',
+                      json={'input': 'print("Hello World")'}).json()
+        ```
+     
+11. Show some kubernetes features  
    * Try and scale the deployment - show the new pods being created
+     `kubectl scale deployment webconsole --replicas 5`
    * Try and kill a pod - show that it gets recreated
-   * Try and change the code and demonstrate a rolling update
+     `kubectl delete <pod-name>`
+   * Simulate a service failure:
+     `request.get('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/crash/')`
 
-11. Introduction to kubectl and Kubernetes API (step3)
+12. Introduction to kubectl and Kubernetes API
     * Start with `kubectl get` - we should have the webconsole running so we should be able to show a few objects
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
 
-12. Assignment:
+13. Assignment:
     * Lets explore a few kubectl commands.
     * Assignment - See if you can figure out a problem with our application
-    * Solution: Demonstrate the replicas problem: `a=1; print(a)` would fail b/c load balancer is round robin.
-
 
 Session 2 - 90m
 ---------------
 
-1. How to make reproducable deployments
-    * Introduction to `kubectl --dry-run -o yaml`
-    * Introduction to `kubectl -apply -f`
-    * Why is this nice - Infrastructure as code, declarative etc.
+1. Infrastructure as code, why is this nice, declarative vs imperative.
 
-2. Walk through of the yaml produced:
+2. Introduction to kubernetes manifests:
+   Show:
+   ```
+      kubectl run webconsole \
+        --image pyconuk-2018-k8s:step2 \
+        --port 5000 \
+        --replicas 2 \
+        --expose \
+        --dry-run -o yaml
+   ```
+   Walk through of the simplified yaml produced:
 
     ```yaml
     apiVersion: extensions/v1beta1
     kind: Deployment
     metadata:
-      labels:
-        app: webconsole
       name: webconsole
     spec:
-      replicas: 1
-      selector:
-        matchLabels:
-          app: webconsole
-      strategy: {}
+      replicas: 2
       template:
         metadata:
-          creationTimestamp: null
           labels:
             app: webconsole
         spec:
           containers:
-          - image: pyconuk-2018-k8s:webconsole
+          - image: pyconuk-2018-k8s:step2
             name: webconsole
             ports:
-              - name: http
+              - name: api
                 containerPort: 5000
     ---
     apiVersion: v1
     kind: Service
     metadata:
       name: webconsole
-      labels:
-        app: webconsole
     spec:
-      type: NodePort
       ports:
       - name: webconsole
-        port: 80
-        targetPort: http
-        protocol: TCP
+        port: 5000
+        targetPort: api
       selector:
         app: webconsole
     ```
 
+3. Back to the example, demonstrate the problem:
+    ```python
+       import requests
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/me/run/',
+                     json={'input': 'a = 1'}).json()
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/me/run/',
+                     json={'input': 'print(a)'}).json()
+    ```
+    * Ask if people understand why
+    * Explain the issue with load balancing
+
 4. Split the Web Console into the service and the job
-    * Introduce services and jobs
+    * Introduce jobs
     * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/consolehub.py)
     * Walk-through of [job_template](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
-    * `kubectl --apply` followed by `kubectl get pods|services|jobs`
+    * Explain `kubectl apply -f step3/consolehub/deployment.yaml`
+    * Demonstrate 
+    ```python
+       import requests
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/start/').json()
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
+                     json={'input': 'a = 1'}).json()
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
+                     json={'input': 'print(a)'}).json()
+    ```
+    
+-- 30 minutes
+
+5. Assignment, run step 3:
+   * Build: `./step3/build.sh`
+   * Apply the manifest: `kubectl apply -f step3/consolehub/deployment.yaml`
+   * Use the application, example:
+    ```python
+       import requests
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/start/').json()
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
+                     json={'input': 'a = 1'}).json()
+       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
+                     json={'input': 'print(a)'}).json()
+    ```
+
+   * Explorer kubectl:
+     ```
+        kubectl get pods
+        kubectl get services
+        kubectl get jobs
+     ```
+     
+-- 50 minutes
 
 5. Introduce the final version that has API, provisioner, redis as a queue and the jobs
 

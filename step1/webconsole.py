@@ -33,3 +33,14 @@ def run(uname):
         )
     )
 
+
+def shutdown_server():
+    func = flask.request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+
+@app.route('/api/crash/', methods=['GET'])
+def crash():
+    shutdown_server()
