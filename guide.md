@@ -179,6 +179,7 @@ Session 1 - 90m
    * Explain pods, deployments, and services
    * Access the service:
      * Grab the service ip: 
+     `export WEBCONSOLE_IP=$(kubectl get service webconsole -o go-template="{{ .spec.clusterIP  }}")`
      * Use the service:
        ```python
         import requests
@@ -211,10 +212,8 @@ Session 1 - 90m
 Session 2 - 90m
 ---------------
 
-1. Infrastructure as code, why is this nice, declarative vs imperative.
-
-2. Introduction to kubernetes manifests:
-   Show:
+1. Introduction to kubernetes manifests:
+   * Show:
    ```
       kubectl run webconsole \
         --image pyconuk-2018-k8s:step2 \
@@ -222,9 +221,9 @@ Session 2 - 90m
         --replicas 2 \
         --expose \
         --dry-run -o yaml
+   
    ```
-   Walk through of the simplified yaml produced:
-
+   * Walk through of the simplified yaml produced:
     ```yaml
     apiVersion: extensions/v1beta1
     kind: Deployment
@@ -256,45 +255,55 @@ Session 2 - 90m
       selector:
         app: webconsole
     ```
+    
+2. Infrastructure as code, why is this nice?
+   * Ask the room what the preference is, between cli and yaml and why?
+   * You can code review YAML, and essentially it's infrastructure as code.
+   * Yaml is declarative, for instance if you want to scale up your application
+     you would edit the yaml, and re-apply instead of running specific commands on the cli. 
 
 3. Back to the example, demonstrate the problem:
+    * grab the service ip:
+    `export WEBCONSOLE_IP=$(kubectl get service webconsole -o go-template="{{ .spec.clusterIP  }}")`
+    * demonstrate:
     ```python
        import requests
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/me/run/',
+       import os
+       requests.post(f'http://{ os.environ["WEBCONSOLE_IP"] }:5000/api/paul/run/',
                      json={'input': 'a = 1'}).json()
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/me/run/',
+       requests.post(f'http://{ os.environ["WEBCONSOLE_IP"] }:5000/api/paul/run/',
                      json={'input': 'print(a)'}).json()
     ```
-    * Ask if people understand why
+    * Ask if people understand why?
     * Explain the issue with load balancing
 
-4. Split the Web Console to solve the problem:
+4. Split the Web Console to solve the problem (code is in step3):
     * Introduce jobs
     * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/consolehub.py)
-    * Walk-through of [job_template](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
+    * Walk-through of [job_template.yaml](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
     * Explain `kubectl apply -f step3/consolehub/deployment.yaml`
-    * Demonstrate 
-    ```python
-       import requests
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/start/').json()
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
-                     json={'input': 'a = 1'}).json()
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
-                     json={'input': 'print(a)'}).json()
-    ```
+    * (see step 5 for instructions)
     
 -- 30 minutes
 
-5. Assignment, run step 3:
+5. Assignment, run step 3: 
+   * Remove the old service and deployment:
+     ```
+     kubectl delete service webconsole
+     kubectl delete deployment webconsole
+     ```
    * Build: `./step3/build.sh`
    * Apply the manifest: `kubectl apply -f step3/consolehub/deployment.yaml`
+   * grab the service ip:
+   `export CONSOLEHUB_IP=$(kubectl get service consolehub -o go-template="{{ .spec.clusterIP  }}")`
    * Use the application, example:
     ```python
        import requests
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/start/').json()
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
+       import os
+       requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/start/').json()
+       requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/run/',
                      json={'input': 'a = 1'}).json()
-       requests.post('http://localhost:8001/api/v1/namespaces/default/services/consolehub/proxy/api/me/run/',
+       requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/run/',
                      json={'input': 'print(a)'}).json()
     ```
 
