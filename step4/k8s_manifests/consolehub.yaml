@@ -30,7 +30,6 @@ kind: Service
 metadata:
   name: consolehub
 spec:
-  type: NodePort
   ports:
   - name: consolehub
     port: 80
