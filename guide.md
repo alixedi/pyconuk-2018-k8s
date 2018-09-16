@@ -282,9 +282,8 @@ Session 2 - 90m
     * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/consolehub.py)
     * Walk-through of [job_template.yaml](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
     * Explain `kubectl apply -f step3/consolehub/deployment.yaml`
-    * (see step 5 for instructions)
-    
--- 30 minutes
+    * (see step 5 for instructions: delete, build, apply)
+    <!--- 30 minutes --->
 
 5. Assignment, run step 3: 
    * Remove the old service and deployment:
@@ -296,7 +295,7 @@ Session 2 - 90m
    * Apply the manifest: `kubectl apply -f step3/consolehub/deployment.yaml`
    * grab the service ip:
    `export CONSOLEHUB_IP=$(kubectl get service consolehub -o go-template="{{ .spec.clusterIP  }}")`
-   * Use the application, example:
+   * Use the application, check if the problem is solved, example:
     ```python
        import requests
        import os
@@ -307,24 +306,16 @@ Session 2 - 90m
                      json={'input': 'print(a)'}).json()
     ```
 
-   * Explorer kubectl:
-     ```
-        kubectl get pods
-        kubectl get services
-        kubectl get jobs
-     ```
-
 6. Problems with the current implementation:
   * Tight coupling of the application code and infrastructure
   * You create the job synchronously
+  <!--- 60 minutes --->
   
--- 60 minutes
-  
-7. Introduce the final version:
+7. Introduce the final version (code in step 4):
     * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step4/consolehub/consolehub.py)
-    * Only the provisioner is coupled to kubernetes [provisioner.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step4/provisoner/provisioner.py)
+    * Only the provisioner is coupled to kubernetes [provisioner.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step4/provisioner/provisioner.py)
     
-8. Demonstrate rolling update
+8. Demonstrate rolling update (see assignment)
     
 9. Assignment, do the rolling update:
    * Build: `./step4/build.sh`

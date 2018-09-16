@@ -41,5 +41,5 @@ spec:
         - name: REDIS_HOSTNAME
           valueFrom:
             configMapKeyRef:
-              name: provisioner
+              name: consolehub-config
               key: redis.hostname
