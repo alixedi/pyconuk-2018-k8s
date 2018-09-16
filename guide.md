@@ -41,17 +41,27 @@ Session 1 - 90m
       * "use existing virtual hard disk file" (use the unziped virtaul disk from the previous step)
       * Create 
       * machine -> settings
-      * network -> port-forwarding -> create new rule: host port: 2222, guest port: 22
+      * network -> advanced -> port-forwarding -> create new rule: host port: 2222, guest port: 22
     * You VM image has microk8s (https://asciinema.org/a/182634) installed. This includes Docker and Kubernetes.
+    * Start the VM
     * Verify that everything is working
-      * get the ip address of the NAT network: `ip addr show | grep vboxnet0`
-      * ssh into your machine: `ssh osboxes@<ip> -p 2222` (if using putty: there is a field for the port)
+      * ssh into your machine: `ssh osboxes@127.0.0.1 -p 2222` (if using putty: there is a field for the port)
       * login with username: osboxes password: osboxes.org
-      * Verify `kubectl get pods --all-namespaces`
-      * cd ~/pyconuk-2018-k8s && git pull
+      * Verify `kubectl get pods --all-namespaces`, if this fails, wait for a one minute (can take up to several minutes),
+        then try again, expected output, example:
+        ```
+        NAMESPACE     NAME                                              READY     STATUS    RESTARTS   AGE
+        kube-system   heapster-v1.5.2-577898ddbf-kt27r                  4/4       Running   8          4d
+        kube-system   kube-dns-864b8bdc77-cwsmw                         3/3       Running   6          4d
+        kube-system   kubernetes-dashboard-6948bdb78-pnsq6              1/1       Running   2          4d
+        kube-system   monitoring-influxdb-grafana-v4-7ffdc569b8-5wq4s   2/2       Running   4          4d
+        ```
+      * update the repo to the latest: `cd ~/pyconuk-2018-k8s && git pull`
+      * It's usefull to use ipython, as it makes copying wrongly indented code from the guide easier: `pip3 install ipython`
+      * pull the latest redis image to save time later in the workshop: `docker pull redis` (sudo password is the same as the login password)
     * We will encourage you to pair with someone
 
-4. Hello World! (step0)
+4. Hello World! (code is in step0)
     * The most basic Flask app in the world:
     
     ```python
@@ -63,17 +73,19 @@ Session 1 - 90m
         return "Hello World!"
     ```
     
-   * You can run it like: `FLASK_APP=hello_world.py flask run`
+   * go the the example directory for this code: `cd step0`
+   * install flask: `pip3 install flask`
+   * You can run it like: `FLASK_APP=hello.py flask run`
+   * Open a second ssh terminal or use fg/bg if you are familiar with this:
+     `curl localhost:5000`, output: `Hello World!`
 
 5. A very brief intro to Docker
     * Versus virtualenv, conda and VMs
-    * Play around with `$ docker`
     * A brief explanation of images, containers etc.
     * image is a lightweight virtual machine image with isolation
     * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries, and other.
       Docker also standarizes (a lot of things) on how you run applications.
-      
--- 30 minutes
+    <!--- 30 minutes --->
 
 6. Hello Docker World!
     * A very basic dockerfile for our hello world app can look like:
@@ -86,9 +98,12 @@ Session 1 - 90m
     CMD ["flask", "run", "-h", "0.0.0.0"]
     ```
     
-    * docker build . -t hello-world:local
+    * Build a docker image: `docker build . -t hello:local`
+    * Now you have a docker image: `docker images |grep hello`
+    * Run the image: `docker run --net host hello:local`
+    * access the service again: `curl localhost:5000`
 
-7. Interactive Console (step1)
+7. Interactive Console (code is in step1)
 
     ```python
     import code
@@ -131,9 +146,13 @@ Session 1 - 90m
     * Create a `Dockerfile` for webconsole
     * Build the image
     * Run the image
-    * What happens when you try and curl POST `/api/run/` something
-
--- 1 hour
+    * What happens when you try and use requests POST something to: `/api/<username>/run/`, for example:
+       ```python
+        import requests
+        requests.post('http://localhost:5000/api/ali/run/',
+                      json={'input': 'print("Hello World")'}).json()
+        ```
+    <!--- 1 hour -->
 
 9. Introduction to Kubernetes
     * Challenges of building modern applications
@@ -144,7 +163,10 @@ Session 1 - 90m
     * Microservice - when are they useful and why? 
     * Kubernetes - what and why? - solves most of the microservices problems
 
-10. Kubernetes Web Console (step2)
+10. Kubernetes Web Console (code in step2)
+    * Build the image:
+      * `cd ../step2`
+      * `./build.sh`
     * Run as service deployment: 
     ```bash
     kubectl run webconsole \
@@ -156,24 +178,30 @@ Session 1 - 90m
     
    * Explain pods, deployments, and services
    * Access the service:
-     * proxy: `kubectl proxy` (explain what this does)
+     * Grab the service ip: 
      * Use the service:
        ```python
         import requests
-        requests.post('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/me/run/',
+        import os
+        requests.post(f'http://{os.environ["WEBCONSOLE_IP"]}:5000/api/ali/run/',
                       json={'input': 'print("Hello World")'}).json()
         ```
      
 11. Show some kubernetes features  
    * Try and scale the deployment - show the new pods being created
      `kubectl scale deployment webconsole --replicas 5`
+   * Look at the new pods: `kubectl get pods`
    * Try and kill a pod - show that it gets recreated
      `kubectl delete <pod-name>`
-   * Simulate a service failure:
-     `request.get('http://localhost:8001/api/v1/namespaces/default/services/webconsole/proxy/api/crash/')`
+   * Simulate a service failure:   
+       ```python
+        import requests
+        import os
+        requests.get(f'http://{os.environ["WEBCONSOLE_IP"]}:5000/api/crash/')
+        ```
+   * Show restarts on the pod: `kubectl get pods`
 
 12. Introduction to kubectl and Kubernetes API
-    * Start with `kubectl get` - we should have the webconsole running so we should be able to show a few objects
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
 
 13. Assignment:
@@ -299,6 +327,9 @@ Session 2 - 90m
     * Local running options:
       * docker for mac & windows: https://blog.docker.com/2018/01/docker-mac-kubernetes/
       * minikube (sometimes fiddly) or microk8s (alpha)
+        * Connect to a service in a production cluster:
+          * proxy: `kubectl proxy` (explain what this does)
+          * Ingress: https://kubernetes.io/docs/concepts/services-networking/ingress/
     * Production clusters:
       * gcp/aws/digital ocean
       * Other options: https://kubernetes.io/docs/setup/     
