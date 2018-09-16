@@ -182,11 +182,11 @@ Session 1 - 90m
      `export WEBCONSOLE_IP=$(kubectl get service webconsole -o go-template="{{ .spec.clusterIP  }}")`
      * Use the service:
        ```python
-        import requests
-        import os
-        requests.post(f'http://{os.environ["WEBCONSOLE_IP"]}:5000/api/ali/run/',
-                      json={'input': 'print("Hello World")'}).json()
-        ```
+       import requests
+       import os
+       requests.post(f'http://{os.environ["WEBCONSOLE_IP"]}:5000/api/ali/run/',
+                     json={'input': 'print("Hello World")'}).json()
+       ```
      
 11. Show some kubernetes features  
    * Try and scale the deployment - show the new pods being created
@@ -196,10 +196,10 @@ Session 1 - 90m
      `kubectl delete <pod-name>`
    * Simulate a service failure:   
        ```python
-        import requests
-        import os
-        requests.get(f'http://{os.environ["WEBCONSOLE_IP"]}:5000/api/crash/')
-        ```
+       import requests
+       import os
+       requests.get(f'http://{os.environ["WEBCONSOLE_IP"]}:5000/api/crash/')
+       ```
    * Show restarts on the pod: `kubectl get pods`
 
 12. Introduction to kubectl and Kubernetes API
@@ -214,14 +214,13 @@ Session 2 - 90m
 
 1. Introduction to kubernetes manifests:
    * Show:
-   ```
-      kubectl run webconsole \
+    ```
+    kubectl run webconsole \
         --image pyconuk-2018-k8s:step2 \
         --port 5000 \
         --replicas 2 \
         --expose \
-        --dry-run -o yaml
-   
+        --dry-run -o yaml 
    ```
    * Walk through of the simplified yaml produced:
     ```yaml
@@ -267,12 +266,12 @@ Session 2 - 90m
     `export WEBCONSOLE_IP=$(kubectl get service webconsole -o go-template="{{ .spec.clusterIP  }}")`
     * demonstrate:
     ```python
-       import requests
-       import os
-       requests.post(f'http://{ os.environ["WEBCONSOLE_IP"] }:5000/api/paul/run/',
-                     json={'input': 'a = 1'}).json()
-       requests.post(f'http://{ os.environ["WEBCONSOLE_IP"] }:5000/api/paul/run/',
-                     json={'input': 'print(a)'}).json()
+    import requests
+    import os
+    requests.post(f'http://{ os.environ["WEBCONSOLE_IP"] }:5000/api/paul/run/',
+                  json={'input': 'a = 1'}).json()
+    requests.post(f'http://{ os.environ["WEBCONSOLE_IP"] }:5000/api/paul/run/',
+                  json={'input': 'print(a)'}).json()
     ```
     * Ask if people understand why?
     * Explain the issue with load balancing
@@ -287,23 +286,23 @@ Session 2 - 90m
 
 5. Assignment, run step 3: 
    * Remove the old service and deployment:
-     ```
-     kubectl delete service webconsole
-     kubectl delete deployment webconsole
-     ```
+    ```
+    kubectl delete service webconsole
+    kubectl delete deployment webconsole
+    ```
    * Build: `./step3/build.sh`
    * Apply the manifest: `kubectl apply -f step3/consolehub/deployment.yaml`
    * grab the service ip:
    `export CONSOLEHUB_IP=$(kubectl get service consolehub -o go-template="{{ .spec.clusterIP  }}")`
    * Use the application, check if the problem is solved, example:
     ```python
-       import requests
-       import os
-       requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/start/').json()
-       requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/run/',
-                     json={'input': 'a = 1'}).json()
-       requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/run/',
-                     json={'input': 'print(a)'}).json()
+    import requests
+    import os
+    requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/start/').json()
+    requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/run/',
+                    json={'input': 'a = 1'}).json()
+    requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/run/',
+                    json={'input': 'print(a)'}).json()
     ```
 
 6. Problems with the current implementation:
@@ -323,7 +322,6 @@ Session 2 - 90m
    * use `kubectl get pods` to see pods shutdown and start in a rolling way
 
 10. Next steps:
-
     * Local running options:
       * docker for mac & windows: https://blog.docker.com/2018/01/docker-mac-kubernetes/
       * minikube (sometimes fiddly) or microk8s (alpha)
