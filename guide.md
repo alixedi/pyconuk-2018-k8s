@@ -93,8 +93,8 @@ Session 1 - 90m
     ```docker
     FROM python
     RUN pip install flask
-    ADD hello_world.py
-    ENV FLASK_APP=hello_world.py
+    ADD hello.py /
+    ENV FLASK_APP=/hello.py
     CMD ["flask", "run", "-h", "0.0.0.0"]
     ```
     

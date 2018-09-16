@@ -1,4 +1,5 @@
 FROM python
 RUN pip install flask
-ENV FLASK_APP=hello.app
+ADD hello.py /
+ENV FLASK_APP=/hello.py
 CMD ["flask", "run", "-h", "0.0.0.0"]
