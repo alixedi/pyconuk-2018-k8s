@@ -79,15 +79,7 @@ Session 1 - 90m
    * Open a second ssh terminal or use fg/bg if you are familiar with this:
      `curl localhost:5000`, output: `Hello World!`
 
-5. A very brief intro to Docker
-    * Versus virtualenv, conda and VMs
-    * A brief explanation of images, containers etc.
-    * image is a lightweight virtual machine image with isolation
-    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries, and other.
-      Docker also standarizes (a lot of things) on how you run applications.
-    <!--- 30 minutes --->
-
-6. Hello Docker World!
+5. Hello Docker World!
     * A very basic dockerfile for our hello world app can look like:
 
     ```docker
@@ -102,6 +94,14 @@ Session 1 - 90m
     * Now you have a docker image: `docker images |grep hello`
     * Run the image: `docker run --net host hello:local`
     * access the service again: `curl localhost:5000`
+    <!--- 30 minutes --->
+
+6. A very brief intro to Docker
+    * Versus virtualenv, conda and VMs
+    * A brief explanation of images, containers etc.
+    * image is a lightweight virtual machine image with isolation
+    * Docker is like virtualenv but it isolated not just python packages but the filesystem, network interfaces and system libraries, and other.
+      Docker also standarizes (a lot of things) on how you run applications.
 
 7. Interactive Console (code is in step1)
 
@@ -143,6 +143,8 @@ Session 1 - 90m
     ```
 
 8. Assignment #1: webconsole in docker
+    * Display instructions from step 5 + the ones below
+    * Run the application directly
     * Create a `Dockerfile` for webconsole
     * Build the image
     * Run the image
@@ -206,8 +208,27 @@ Session 1 - 90m
     * `$ kubectl --help` has sections for basic commands - beginners and intermediate.
 
 13. Assignment:
+    * Build the image:
+      * `cd ../step2`
+      * `./build.sh`
+    * Run as service deployment: 
+    ```bash
+    kubectl run webconsole \
+        --image pyconuk-2018-k8s:step2 \
+        --port 5000 \
+        --replicas 2 \
+        --expose
+    ```
     * Lets explore a few kubectl commands.
-    * Assignment - See if you can figure out a problem with our application
+    ```
+        kubectl get pods
+        kubectl get deployments
+        kubectl get services
+        kubectl --help
+        kubectl explain
+        kubectl describe
+    ```
+    * Assignment: See if you can figure out a problem with our application
 
 Session 2 - 90m
 ---------------
