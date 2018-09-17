@@ -21,7 +21,7 @@ def start_webconsole(uname):
         'name': 'webconsole-{}'.format(uname),
     }
     job['spec']['template']['metadata'] = {
-        'labels': {'uname': uname}
+        'labels': {'uname': uname, 'managed-by': 'provisioner'}
     }
 
     try:

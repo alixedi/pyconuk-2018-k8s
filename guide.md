@@ -275,6 +275,7 @@ Session 2 - 90m
       selector:
         app: webconsole
     ```
+   * Questions?
     
 2. Infrastructure as code, why is this nice?
    * Ask the room what the preference is, between cli and yaml and why?
@@ -301,7 +302,6 @@ Session 2 - 90m
     * Introduce jobs
     * Quick walkthrough of [consolehub.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/consolehub.py)
     * Walk-through of [job_template.yaml](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step3/consolehub/job-template.yaml)
-    * Explain `kubectl apply -f step3/consolehub/deployment.yaml`
     * (see step 5 for instructions: delete, build, apply)
     <!--- 30 minutes --->
 
@@ -336,6 +336,13 @@ Session 2 - 90m
     * Only the provisioner is coupled to kubernetes [provisioner.py](https://github.com/alixedi/pyconuk-2018-k8s/blob/master/step4/provisioner/provisioner.py)
     
 8. Demonstrate rolling update (see assignment)
+    ```python
+    import requests
+    import os
+    requests.post(f'http://{ os.environ["CONSOLEHUB_IP"] }/api/paul/run/',
+                    json={'input': 'print(a)'}).json()
+    ```
+
     
 9. Assignment, do the rolling update:
    * Build: `./step4/build.sh`
