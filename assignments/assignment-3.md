@@ -1,5 +1,6 @@
 Assignment, run step 3: 
    * Remove the old service and deployment:
+    
     ```
     kubectl delete service webconsole
     kubectl delete deployment webconsole
