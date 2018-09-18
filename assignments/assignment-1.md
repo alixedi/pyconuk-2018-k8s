@@ -1,14 +1,16 @@
-Assignment #1: webconsole in docker
-    * Run the application directly
-    * Create a `Dockerfile` for webconsole
-    * Build the image
-    * Run the image
-    * What happens when you try and use requests POST something to: `/api/<username>/run/`, for example:
-       ```python
-        import requests
-        requests.post('http://localhost:5000/api/ali/run/',
-                      json={'input': 'print("Hello World")'}).json()
-        ```
+Assignment #1 webconsole in docker:
+
+   * Run the application directly
+   * Create a `Dockerfile` for webconsole
+   * Build the image
+   * Run the image
+   * What happens when you try and use requests POST something to: `/api/<username>/run/`, for example:
+
+   ```python
+   import requests
+   requests.post('http://localhost:5000/api/ali/run/',
+                  json={'input': 'print("Hello World")'}).json()
+   ```
 
 As a reminder, sample for hello world:
     * A very basic dockerfile for our hello world app can look like:
