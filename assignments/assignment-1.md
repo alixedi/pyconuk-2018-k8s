@@ -1,4 +1,5 @@
 Assignment #1 webconsole in docker:
+-----------------------------------
 
    * Run the application directly
    * Create a `Dockerfile` for webconsole
