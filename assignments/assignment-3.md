@@ -1,4 +1,5 @@
-Assignment, run step 3: 
+Assignment 3: 
+-------------
 
 * Remove the old service and deployment:
 
