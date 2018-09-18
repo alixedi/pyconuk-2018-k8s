@@ -16,6 +16,18 @@ kubectl run webconsole \
      --expose
 ```
 
+* Grab the service ip: 
+   `export WEBCONSOLE_IP=$(kubectl get service webconsole -o go-template="{{ .spec.clusterIP  }}")`
+   
+* Use the service:
+
+```python
+import requests
+import os
+requests.post(f'http://{os.environ["WEBCONSOLE_IP"]}:5000/api/ali/run/',
+              json={'input': 'print("Hello World")'}).json()
+```
+
 * Lets explore a few kubectl commands.
 
 ```
