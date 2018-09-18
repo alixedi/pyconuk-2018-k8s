@@ -1,0 +1,29 @@
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    metadata:
+      name: webconsole
+    spec:
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            app: webconsole
+        spec:
+          containers:
+          - image: pyconuk-2018-k8s:step2
+            name: webconsole
+            ports:
+              - name: api
+                containerPort: 5000
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: webconsole
+    spec:
+      ports:
+      - name: webconsole
+        port: 5000
+        targetPort: api
+      selector:
+        app: webconsole
