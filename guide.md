@@ -1,5 +1,13 @@
-PyconUk - Kubernetes Workshop
-=============================
+Pycon IE - Kubernetes Workshop
+==============================
+
+This repository is a fork of Ali Zaidi's and Paul van der Linden's PyCon UK repository.
+We'll be feeding suggestions through as PRs. All suggestions foe improvement are welcome.
+
+The purpose of the workshop is to get you started using Kubernetes so you can make your
+own discoveries. You run Kubernetes on a virtual machine on your laptop, but you will
+find that the knowledge you develop will be directly applicable to cloud-based systems.
+You will learn by doing, and hopefully by talking to the presenter and your classmates.
 
 Home instructions
 -----------------
@@ -14,10 +22,10 @@ Home instructions
 - When following after the workshop at Pycon UK, see the guide at:
   https://github.com/alixedi/pyconuk-2018-k8s
 
-Session 1 - 90m
----------------
+Class Content
+-------------
 
-1. Introduction to speaker
+1. Introduction to speaker(s).
 
 2. After this class we hope you will be able to:
     * Demonstrate Kubernetes to your colleagues.
@@ -28,6 +36,8 @@ Session 1 - 90m
     * Demonstrate using kubectl to interact with the Kubernetes API.
 
    Time limitations may mean you have to achieve some objectives after class.
+   All necessary steps for doing so are listed here, and all necessary files
+   are included in the repository.
 
 3. Installation
     * Laptop requirements:
