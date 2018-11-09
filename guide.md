@@ -9,6 +9,9 @@ own discoveries. You run Kubernetes on a virtual machine on your laptop, but you
 find that the knowledge you develop will be directly applicable to cloud-based systems.
 You will learn by doing, and hopefully by talking to the presenter and your classmates.
 
+Since the class is likely to be light on instructors, you are encouraged to share your
+knowledge to help your classmates to make faster progress.
+
 Home instructions
 -----------------
 
