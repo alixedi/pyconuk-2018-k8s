@@ -210,7 +210,7 @@ Class Content
      `kubectl scale deployment webconsole --replicas 5`
    * Look at the new pods: `kubectl get pods`
    * Try and kill a pod - show that it gets recreated
-     `kubectl delete <pod-name>`
+     `kubectl delete pod <pod-name>`
    * Simulate a service failure:   
        ```python
        import requests
