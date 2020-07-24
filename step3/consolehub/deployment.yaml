@@ -10,6 +10,7 @@ spec:
       labels:
         app: consolehub
     spec:
+      serviceAccount: consolehub
       containers:
       - image: pyconuk-2018-k8s:consolehub
         name: consolehub
