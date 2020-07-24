@@ -1,5 +1,16 @@
-PyconUk - Kubernetes Workshop
-=============================
+Pycon IE - Kubernetes Workshop
+==============================
+
+This repository is a fork of Ali Zaidi's and Paul van der Linden's PyCon UK repository.
+We'll be feeding suggestions through as PRs. All suggestions foe improvement are welcome.
+
+The purpose of the workshop is to get you started using Kubernetes so you can make your
+own discoveries. You run Kubernetes on a virtual machine on your laptop, but you will
+find that the knowledge you develop will be directly applicable to cloud-based systems.
+You will learn by doing, and hopefully by talking to the presenter and your classmates.
+
+Since the class is likely to be light on instructors, you are encouraged to share your
+knowledge to help your classmates to make faster progress.
 
 Home instructions
 -----------------
@@ -8,24 +19,28 @@ Home instructions
     * ~4 GB of RAM
     * ~15 GB of free disk space
 - Download & install virtualbox: https://www.virtualbox.org/wiki/Downloads
-- Download & unzip our disk image: https://tinyurl.com/y9tvcsbj
+   - Download & unzip our disk image: https://tinyurl.com/y9tvcsbj
 - Download & install ssh client (mac & linux have this usually installed), for windows:
   https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 - When following after the workshop at Pycon UK, see the guide at:
   https://github.com/alixedi/pyconuk-2018-k8s
 
-Session 1 - 90m
----------------
+Class Content
+-------------
 
-1. Introduction to speakers
+1. Introduction to speaker(s).
 
-2. Learning objectives
+2. After this class we hope you will be able to:
     * Demonstrate Kubernetes to your colleagues.
-    * Deploy a web application on Kubernetes.
+    * Deploy a web application to Kubernetes.
     * Manage your deployment e.g. scaling up and down, rolling updates and rollbacks. 
     * Deploy multiple services on Kubernetes.
-    * Describe the Kubernetes API to your colleagues.
+    * Describe the Kubernetes API.
     * Demonstrate using kubectl to interact with the Kubernetes API.
+
+   Time limitations may mean you have to achieve some objectives after class.
+   All necessary steps for doing so are listed here, and all necessary files
+   are included in the repository.
 
 3. Installation
     * Laptop requirements:
@@ -195,7 +210,7 @@ Session 1 - 90m
      `kubectl scale deployment webconsole --replicas 5`
    * Look at the new pods: `kubectl get pods`
    * Try and kill a pod - show that it gets recreated
-     `kubectl delete <pod-name>`
+     `kubectl delete pod <pod-name>`
    * Simulate a service failure:   
        ```python
        import requests

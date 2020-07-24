@@ -1,5 +1,5 @@
-Assignment 3: 
--------------
+Assignment 3: Redeploy with fixes
+---------------------------------
 
 * Remove the old service and deployment:
 
