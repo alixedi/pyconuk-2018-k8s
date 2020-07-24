@@ -1,10 +1,13 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: consolehub
 spec:
   replicas: 5
+  selector:
+    matchLabels:
+      app: consolehub
   template:
     metadata:
       labels:
@@ -23,6 +26,7 @@ kind: Service
 metadata:
   name: consolehub
 spec:
+  type: LoadBalancer
   ports:
   - name: consolehub
     port: 80
